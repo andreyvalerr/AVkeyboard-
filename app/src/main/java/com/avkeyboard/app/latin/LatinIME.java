@@ -98,6 +98,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
+import com.avkeyboard.app.voice.VoiceInputController;
+
 /**
  * Input method implementation for Qwerty'ish keyboard.
  */
@@ -137,6 +139,7 @@ public class LatinIME extends InputMethodService implements
     private SuggestionStripView mSuggestionStripView;
 
     private RichInputMethodManager mRichImm;
+    private VoiceInputController mVoiceInputController;
     final KeyboardSwitcher mKeyboardSwitcher;
     private final SubtypeState mSubtypeState = new SubtypeState((InputMethodSubtype subtype) -> { switchToSubtype(subtype); return Unit.INSTANCE; });
     private final StatsUtilsManager mStatsUtilsManager;
@@ -572,6 +575,14 @@ public class LatinIME extends InputMethodService implements
         registerReceiver(mRestartAfterDeviceUnlockReceiver, restartAfterUnlockFilter);
 
         StatsUtils.onCreate(mSettings.getCurrent(), mRichImm);
+
+        mVoiceInputController = new VoiceInputController(this, text -> {
+            final android.view.inputmethod.InputConnection ic = getCurrentInputConnection();
+            if (ic != null) {
+                ic.commitText(text, 1);
+            }
+            return kotlin.Unit.INSTANCE;
+        });
     }
 
     private void loadSettings() {
@@ -683,6 +694,10 @@ public class LatinIME extends InputMethodService implements
 
     @Override
     public void onDestroy() {
+        if (mVoiceInputController != null) {
+            mVoiceInputController.destroy();
+            mVoiceInputController = null;
+        }
         mClipboardHistoryManager.onDestroy();
         mDictionaryFacilitator.closeDictionaries();
         mSettings.onDestroy();
@@ -1390,7 +1405,10 @@ public class LatinIME extends InputMethodService implements
     // completely replace #onCodeInput.
     public void onEvent(@NonNull final Event event) {
         if (KeyCode.VOICE_INPUT == event.getKeyCode()) {
-            mRichImm.switchToShortcutIme(this);
+            if (mVoiceInputController != null) {
+                mVoiceInputController.toggle();
+            }
+            return;
         }
         final InputTransaction completeInputTransaction =
                 mInputLogic.onCodeInput(mSettings.getCurrent(), event,
