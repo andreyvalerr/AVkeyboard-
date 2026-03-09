@@ -136,6 +136,9 @@ dependencies {
     implementation("sh.calvin.reorderable:reorderable:2.4.3") // for easier re-ordering, todo: check 3.0.0
     implementation("com.github.skydoves:colorpicker-compose:1.1.3") // for user-defined colors
 
+    // network
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
     // test
     testImplementation(kotlin("test"))
     testImplementation("junit:junit:4.13.2")
