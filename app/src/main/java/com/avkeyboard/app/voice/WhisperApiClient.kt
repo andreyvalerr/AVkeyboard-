@@ -75,7 +75,7 @@ class WhisperApiClient(
         }
 
         return try {
-            JSONObject(body).getString("text")
+            JSONObject(body).getString("text").trim()
         } catch (e: Exception) {
             throw WhisperApiException("Неверный формат ответа: $body", response.code)
         }

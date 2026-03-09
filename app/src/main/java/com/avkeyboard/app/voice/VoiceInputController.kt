@@ -13,7 +13,8 @@ import kotlinx.coroutines.*
 
 class VoiceInputController(
     private val context: Context,
-    private val onTextResult: (String) -> Unit
+    private val onTextResult: (String) -> Unit,
+    private val onStateChanged: ((State) -> Unit)? = null
 ) {
     companion object {
         private const val TAG = "AVkeyboard"
@@ -22,6 +23,10 @@ class VoiceInputController(
     enum class State { IDLE, RECORDING, PROCESSING }
 
     private var state = State.IDLE
+        set(value) {
+            field = value
+            mainHandler.post { onStateChanged?.invoke(value) }
+        }
     private var audioRecorder: AudioRecorder? = null
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private val mainHandler = Handler(Looper.getMainLooper())
