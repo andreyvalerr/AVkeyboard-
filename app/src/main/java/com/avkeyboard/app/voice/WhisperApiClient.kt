@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 
 class WhisperApiClient(
     private val apiKey: String,
-    private val baseUrl: String = "https://api.groq.com/openai/v1",
+    private val baseUrl: String = "https://api.groq.com/openai/v1/audio/transcriptions",
     private val model: String = "whisper-large-v3-turbo"
 ) {
     private val client = OkHttpClient.Builder()
@@ -54,7 +54,7 @@ class WhisperApiClient(
         }
 
         val request = Request.Builder()
-            .url("$baseUrl/audio/transcriptions")
+            .url(baseUrl)
             .header("Authorization", "Bearer $apiKey")
             .post(bodyBuilder.build())
             .build()

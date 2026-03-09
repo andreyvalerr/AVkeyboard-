@@ -484,4 +484,17 @@
     <string name="ask_later">Спросить позже</string>
     <string name="gesture_data_take_me_there">Перейти</string>
     <string name="prefs_bottom_row_scale">Масштаб нижнего ряда</string>
+
+    <!-- Voice input settings -->
+    <string name="settings_screen_voice_input">Голосовой ввод</string>
+    <string name="voice_api_provider">Провайдер API</string>
+    <string name="voice_provider_custom">Другой</string>
+    <string name="voice_api_url">URL API</string>
+    <string name="voice_api_key">Ключ API</string>
+    <string name="voice_api_key_not_set">Не задан</string>
+    <string name="voice_model">Модель</string>
+    <string name="voice_language">Язык</string>
+    <string name="voice_language_auto">Автоопределение</string>
+    <string name="voice_max_duration">Макс. длительность записи</string>
+    <string name="voice_max_duration_value">%d сек</string>
 </resources>

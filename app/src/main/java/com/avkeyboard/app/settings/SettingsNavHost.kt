@@ -32,6 +32,7 @@ import com.avkeyboard.app.settings.screens.SecondaryLayoutScreen
 import com.avkeyboard.app.settings.screens.SubtypeScreen
 import com.avkeyboard.app.settings.screens.TextCorrectionScreen
 import com.avkeyboard.app.settings.screens.ToolbarScreen
+import com.avkeyboard.app.settings.screens.VoiceInputScreen
 import com.avkeyboard.app.settings.screens.gesturedata.GestureDataScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -77,6 +78,7 @@ fun SettingsNavHost(
                 onClickLanguage = { navController.navigate(SettingsDestination.Languages) },
                 onClickLayouts = { navController.navigate(SettingsDestination.Layouts) },
                 onClickDictionaries = { navController.navigate(SettingsDestination.Dictionaries) },
+                onClickVoiceInput = { navController.navigate(SettingsDestination.VoiceInput) },
                 onClickBack = ::goBack,
             )
         }
@@ -102,6 +104,9 @@ fun SettingsNavHost(
         composable(SettingsDestination.DataReview) {
             ReviewScreen(onClickBack = ::goBack)
         }*/
+        composable(SettingsDestination.VoiceInput) {
+            VoiceInputScreen(onClickBack = ::goBack)
+        }
         composable(SettingsDestination.Advanced) {
             AdvancedSettingsScreen(onClickBack = ::goBack)
         }
@@ -164,6 +169,7 @@ object SettingsDestination {
     const val Subtype = "subtype/"
     const val Layouts = "layouts"
     const val Dictionaries = "dictionaries"
+    const val VoiceInput = "voice_input"
     val navTarget = MutableStateFlow(Settings)
 
     private val navScope = CoroutineScope(Dispatchers.Default)

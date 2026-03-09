@@ -1080,5 +1080,18 @@ New dictionary:
      string will probably be removed once data gathering is finished (end of 2026 latest) -->
     <string name="gesture_data_links">Information on gesture data gathering on:</string>
 
+    <!-- Voice input settings -->
+    <string name="settings_screen_voice_input">Voice input</string>
+    <string name="voice_api_provider">API Provider</string>
+    <string name="voice_provider_custom">Custom</string>
+    <string name="voice_api_url">API URL</string>
+    <string name="voice_api_key">API Key</string>
+    <string name="voice_api_key_not_set">Not set</string>
+    <string name="voice_model">Model</string>
+    <string name="voice_language">Language</string>
+    <string name="voice_language_auto">Auto-detect</string>
+    <string name="voice_max_duration">Max recording duration</string>
+    <string name="voice_max_duration_value">%d sec</string>
+
     <!-- new strings should go above the section for gesture data gathering -->
 </resources>

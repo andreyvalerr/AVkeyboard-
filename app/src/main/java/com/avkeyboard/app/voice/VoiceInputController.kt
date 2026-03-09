@@ -71,14 +71,17 @@ class VoiceInputController(
 
         val prefs = context.getSharedPreferences("avkeyboard_voice", Context.MODE_PRIVATE)
         val apiKey = prefs.getString("whisper_api_key", "") ?: ""
-        val endpoint = prefs.getString("whisper_api_url", "https://api.groq.com/openai/v1") ?: "https://api.groq.com/openai/v1"
+        val endpoint = prefs.getString("whisper_api_url", "https://api.groq.com/openai/v1/audio/transcriptions") ?: "https://api.groq.com/openai/v1/audio/transcriptions"
         val model = prefs.getString("whisper_model", "whisper-large-v3-turbo") ?: "whisper-large-v3-turbo"
+
+        val language = prefs.getString("whisper_language", "") ?: ""
+        val maxDuration = prefs.getInt("whisper_max_duration", 30)
 
         val client = WhisperApiClient(apiKey, endpoint, model)
 
         scope.launch {
             try {
-                val text = client.transcribe(file)
+                val text = client.transcribe(file, language.ifEmpty { null })
                 if (text.isNotBlank()) {
                     onTextResult(text)
                 } else {
