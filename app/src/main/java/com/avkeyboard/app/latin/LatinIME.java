@@ -99,7 +99,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.avkeyboard.app.voice.VoiceInputController;
-import com.avkeyboard.app.voice.VoiceInputOverlay;
 
 /**
  * Input method implementation for Qwerty'ish keyboard.
@@ -141,7 +140,6 @@ public class LatinIME extends InputMethodService implements
 
     private RichInputMethodManager mRichImm;
     private VoiceInputController mVoiceInputController;
-    private VoiceInputOverlay mVoiceInputOverlay;
     final KeyboardSwitcher mKeyboardSwitcher;
     private final SubtypeState mSubtypeState = new SubtypeState((InputMethodSubtype subtype) -> { switchToSubtype(subtype); return Unit.INSTANCE; });
     private final StatsUtilsManager mStatsUtilsManager;
@@ -578,7 +576,6 @@ public class LatinIME extends InputMethodService implements
 
         StatsUtils.onCreate(mSettings.getCurrent(), mRichImm);
 
-        mVoiceInputOverlay = new VoiceInputOverlay(this);
         mVoiceInputController = new VoiceInputController(this, text -> {
             android.util.Log.d("AVkeyboard", "Voice result callback, text length=" + (text != null ? text.length() : 0));
             final android.view.inputmethod.InputConnection ic = getCurrentInputConnection();
@@ -594,13 +591,9 @@ public class LatinIME extends InputMethodService implements
             return kotlin.Unit.INSTANCE;
         }, state -> {
             android.util.Log.d("AVkeyboard", "Voice state changed: " + state);
-            if (mInputView instanceof android.view.ViewGroup) {
-                android.view.ViewGroup parent = (android.view.ViewGroup) mInputView;
-                if (state == VoiceInputController.State.IDLE) {
-                    mVoiceInputOverlay.hide();
-                } else {
-                    mVoiceInputOverlay.show(parent, state);
-                }
+            final MainKeyboardView mkv = mKeyboardSwitcher.getMainKeyboardView();
+            if (mkv != null) {
+                mkv.setVoiceKeyRecording(state == VoiceInputController.State.RECORDING);
             }
             return kotlin.Unit.INSTANCE;
         });
@@ -719,10 +712,6 @@ public class LatinIME extends InputMethodService implements
         if (mVoiceInputController != null) {
             mVoiceInputController.destroy();
             mVoiceInputController = null;
-        }
-        if (mVoiceInputOverlay != null) {
-            mVoiceInputOverlay.hide();
-            mVoiceInputOverlay = null;
         }
         mClipboardHistoryManager.onDestroy();
         mDictionaryFacilitator.closeDictionaries();

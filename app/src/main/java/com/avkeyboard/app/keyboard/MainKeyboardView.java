@@ -115,6 +115,10 @@ public final class MainKeyboardView extends KeyboardView implements DrawingProxy
     // TODO: Consider extending to support multiple popup keys panels
     private PopupKeysPanel mPopupKeysPanel;
 
+    // Voice key recording indicator
+    private boolean mVoiceKeyRecording;
+    private final Paint mRecordingDotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
     // Gesture floating preview text
     private final int mGestureFloatingPreviewTextLingerTimeout;
 
@@ -657,6 +661,17 @@ public final class MainKeyboardView extends KeyboardView implements DrawingProxy
         invalidateKey(shortcutKey);
     }
 
+    public void setVoiceKeyRecording(final boolean recording) {
+        if (mVoiceKeyRecording == recording) return;
+        mVoiceKeyRecording = recording;
+        final Keyboard keyboard = getKeyboard();
+        if (keyboard == null) return;
+        final Key voiceKey = keyboard.getKey(KeyCode.VOICE_INPUT);
+        if (voiceKey != null) {
+            invalidateKey(voiceKey);
+        }
+    }
+
     public void updateLockState(final int keyCode, final boolean locked) {
         final Keyboard keyboard = getKeyboard();
         if (keyboard == null) {
@@ -707,6 +722,15 @@ public final class MainKeyboardView extends KeyboardView implements DrawingProxy
         }
         super.onDrawKeyTopVisuals(key, canvas, paint, params);
         final int code = key.getCode();
+        // Draw red recording dot on voice key
+        if (code == KeyCode.VOICE_INPUT && mVoiceKeyRecording) {
+            mRecordingDotPaint.setColor(0xFFFF1744);
+            mRecordingDotPaint.setStyle(Paint.Style.FILL);
+            final float dotRadius = key.getHeight() * 0.1f;
+            final float dotX = key.getDrawWidth() * 0.78f;
+            final float dotY = key.getHeight() * 0.22f;
+            canvas.drawCircle(dotX, dotY, dotRadius, mRecordingDotPaint);
+        }
         if (code == Constants.CODE_SPACE) {
             // If input language are explicitly selected.
             if (mLanguageOnSpacebarFormatType != LanguageOnSpacebarUtils.FORMAT_TYPE_NONE) {
