@@ -577,12 +577,17 @@ public class LatinIME extends InputMethodService implements
         StatsUtils.onCreate(mSettings.getCurrent(), mRichImm);
 
         mVoiceInputController = new VoiceInputController(this, text -> {
+            android.util.Log.d("AVkeyboard", "Voice result callback, text length=" + (text != null ? text.length() : 0));
             final android.view.inputmethod.InputConnection ic = getCurrentInputConnection();
             if (ic != null) {
                 ic.commitText(text, 1);
+                android.util.Log.d("AVkeyboard", "Voice text committed to InputConnection");
+            } else {
+                android.util.Log.w("AVkeyboard", "Voice result: InputConnection is null!");
             }
             return kotlin.Unit.INSTANCE;
         });
+        android.util.Log.d("AVkeyboard", "VoiceInputController initialized");
     }
 
     private void loadSettings() {
@@ -1405,6 +1410,7 @@ public class LatinIME extends InputMethodService implements
     // completely replace #onCodeInput.
     public void onEvent(@NonNull final Event event) {
         if (KeyCode.VOICE_INPUT == event.getKeyCode()) {
+            android.util.Log.d("AVkeyboard", "onEvent: VOICE_INPUT key pressed, controller=" + mVoiceInputController);
             if (mVoiceInputController != null) {
                 mVoiceInputController.toggle();
             }

@@ -5,6 +5,7 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Build
+import android.util.Log
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
@@ -23,14 +24,23 @@ class AudioRecorder(
 
     fun start() {
         if (isRecording) return
+        Log.d("AVkeyboard", "AudioRecorder.start() useMediaRecorder=${useMediaRecorder()}, maxDurationMs=$maxDurationMs")
         val file = File.createTempFile("voice_", if (useMediaRecorder()) ".ogg" else ".wav", context.cacheDir)
         outputFile = file
         isRecording = true
 
-        if (useMediaRecorder()) {
-            startMediaRecorder(file)
-        } else {
-            startAudioRecord(file)
+        try {
+            if (useMediaRecorder()) {
+                startMediaRecorder(file)
+            } else {
+                startAudioRecord(file)
+            }
+        } catch (e: Exception) {
+            Log.e("AVkeyboard", "AudioRecorder.start() failed", e)
+            isRecording = false
+            outputFile = null
+            file.delete()
+            throw e
         }
 
         recordingScope = CoroutineScope(Dispatchers.IO)
